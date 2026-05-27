@@ -1,0 +1,30 @@
+name_prefix: railsapp-
+image: railsapp-devbox
+size: M
+volume_size_gb: 100
+auto_stop_idle_timeout: 1h
+repository: github.com/buildatscale-tv/railsapp
+sessions:
+  - name: db
+    command: |
+      /bin/bash -c '
+      cd /workspaces/railsapp
+      exec docker compose up db
+      '
+  - name: app
+    command: |
+      /bin/bash -c '
+      cd /workspaces/railsapp
+      until pg_isready -h localhost -q 2>/dev/null; do sleep 1; done
+      bundle exec rails db:prepare
+      exec bin/dev
+      '
+  - name: opencode
+    command: |
+      /bin/bash -c '
+      export PATH="/root/.opencode/bin:$PATH"
+      mkdir -p /root/.config/opencode
+      echo "{\"permission\":{\"*\":\"allow\"}}" > /root/.config/opencode/opencode.json
+      cd /workspaces/railsapp
+      exec opencode serve --hostname 0.0.0.0 --port 4096
+      '
