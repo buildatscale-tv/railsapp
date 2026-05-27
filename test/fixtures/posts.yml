@@ -4,8 +4,10 @@ one:
   title: MyString
   body: MyText
   published: false
+  authored_date: 2026-05-27
 
 two:
   title: MyString
   body: MyText
   published: false
+  authored_date: 2026-05-27
